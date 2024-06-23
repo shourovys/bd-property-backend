@@ -22,7 +22,10 @@ app.use(express.json());
 // Middleware for setting headers including Referrer-Policy
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Referrer-Policy', 'strict-origin-when-cross-origin');
   if (req.method === 'OPTIONS') {
@@ -35,6 +38,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 const port = process.env.PORT || 3000;
 
 connectDB();
+
+app.get('/', (req: Request, res: Response) => {
+  res.json('welcome to bd property');
+});
 
 // Route to fetch all properties with filters
 app.get('/api/properties', async (req: Request, res: Response) => {
@@ -123,7 +130,8 @@ app.get('/api/properties', async (req: Request, res: Response) => {
 
     console.log('Filters:', filters);
 
-    const properties = await PropertyItem.find(filters).select("id referenceNo title size price bed bath status address images")
+    const properties = await PropertyItem.find(filters)
+      .select('id referenceNo title size price bed bath status address images')
       .skip((parsedPage - 1) * parsedLimit)
       .limit(parsedLimit)
       .exec();
