@@ -2,8 +2,8 @@ import cors from 'cors';
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import QueryString from 'qs';
-import connectDB from './lib/connectDB';
-import PropertyItem from './models/PropertyItem';
+import connectDB from './src/lib/connectDB';
+import PropertyItem from './src/models/PropertyItem';
 
 const app = express();
 
