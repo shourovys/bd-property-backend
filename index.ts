@@ -9,11 +9,7 @@ const app = express();
 
 // Detailed CORS configuration
 const corsOptions = {
-  origin: '*', // Allow all origins for now. Change this to your frontend's origin in production.
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  allowedHeaders: ['Content-Type', 'Authorization'], // Adjust headers as needed
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
+  origin: ['http://localhost:3000', 'https://bd-property-shourov.vercel.app'],
 };
 
 app.use(cors(corsOptions));
