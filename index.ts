@@ -153,6 +153,7 @@ app.get('/api/properties', async (req: Request, res: Response) => {
 });
 
 // Route to fetch a single property by ID
+// Route to fetch a single property by ID and 3 related properties
 app.get('/api/properties/:id', async (req: Request, res: Response) => {
   try {
     const propertyId = req.params.id;
@@ -165,10 +166,22 @@ app.get('/api/properties/:id', async (req: Request, res: Response) => {
       });
     }
 
+    // Find 3 related properties based on type or location
+    const relatedProperties = await PropertyItem.find({
+      _id: { $ne: propertyId },
+      'type.id': property.type.id,
+      'subType.id': property.subType.id,
+      'address.location': property.address.location,
+      'purpose.purpose.id': property.purpose.purpose.id,
+    })
+      .select('id referenceNo title size price bed bath status address images')
+      .limit(3)
+      .exec();
+
     res.json({
       success: true,
       message: '',
-      results: property,
+      results: { details: property, related: relatedProperties },
     });
   } catch (error) {
     console.log('Error fetching property:', error);
