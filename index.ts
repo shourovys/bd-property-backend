@@ -168,7 +168,7 @@ app.get('/api/properties/:id', async (req: Request, res: Response) => {
     res.json({
       success: true,
       message: '',
-      result: property,
+      results: property,
     });
   } catch (error) {
     console.log('Error fetching property:', error);
