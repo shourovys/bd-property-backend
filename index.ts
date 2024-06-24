@@ -171,8 +171,8 @@ app.get('/api/properties/:id', async (req: Request, res: Response) => {
       _id: { $ne: propertyId },
       'type.id': property.type.id,
       'subType.id': property.subType.id,
-      'address.location': property.address.location,
-      'purpose.purpose.id': property.purpose.purpose.id,
+      // 'address.location': property.address.location,
+      // 'purpose.purpose.id': property.purpose.purpose.id,
     })
       .select('id referenceNo title size price bed bath status address images')
       .limit(3)
