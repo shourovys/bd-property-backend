@@ -65,13 +65,18 @@ app.get('/api/properties', async (req: Request, res: Response) => {
     }
 
     if (queryParams.status) {
-      filters.status = queryParams.status;
+      filters['purpose.subPurpose.id'] = queryParams.status;
     }
 
-    if (queryParams.location) {
-      filters['address.location'] = Array.isArray(queryParams.location)
-        ? { $in: queryParams.location }
-        : queryParams.location;
+    if (queryParams.location && Array.isArray(queryParams.location)) {
+      const isDhaka = queryParams.location.find(
+        (location) => location === 'Dhaka'
+      );
+      if (!isDhaka) {
+        filters['address.location'] = Array.isArray(queryParams.location)
+          ? { $in: queryParams.location }
+          : queryParams.location;
+      }
     }
 
     if (queryParams.type) {
@@ -126,8 +131,29 @@ app.get('/api/properties', async (req: Request, res: Response) => {
 
     console.log('Filters:', filters);
 
+    const sort: any = {};
+    if (queryParams.sort) {
+      switch (queryParams.sort) {
+        case 'popular':
+          // sort.popularity = -1; // Assuming there's a popularity field
+          break;
+        case 'newest':
+          sort.createdAt = -1; // Assuming there's a createdAt field
+          break;
+        case 'lowestPrice':
+          sort.price = 1;
+          break;
+        case 'highestPrice':
+          sort.price = -1;
+          break;
+        default:
+          break;
+      }
+    }
+
     const properties = await PropertyItem.find(filters)
       .select('id referenceNo title size price bed bath status address images')
+      .sort(sort)
       .skip((parsedPage - 1) * parsedLimit)
       .limit(parsedLimit)
       .exec();
