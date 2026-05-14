@@ -78,14 +78,18 @@ app.get('/api/properties', (req: Request, res: Response) => {
       }
 
       if (queryParams.location && Array.isArray(queryParams.location)) {
-        const isDhaka = queryParams.location.find((loc) => loc === 'Dhaka');
+        const locations = queryParams.location as string[];
+        const isDhaka = locations.find((loc) => loc?.toLowerCase() === 'dhaka');
         if (!isDhaka) {
-          if (!queryParams.location.includes(property.address?.location)) {
+          const locMatched = locations.some((loc) =>
+            property.address?.location?.toLowerCase().includes(loc.toLowerCase())
+          );
+          if (!locMatched) {
             isMatch = false;
           }
         }
-      } else if (queryParams.location && typeof queryParams.location === 'string' && queryParams.location !== 'Dhaka') {
-        if (property.address?.location !== queryParams.location) {
+      } else if (queryParams.location && typeof queryParams.location === 'string' && queryParams.location.toLowerCase() !== 'dhaka') {
+        if (!property.address?.location?.toLowerCase().includes(queryParams.location.toLowerCase())) {
           isMatch = false;
         }
       }
@@ -107,14 +111,26 @@ app.get('/api/properties', (req: Request, res: Response) => {
         if (!baths.includes(property.bath)) isMatch = false;
       }
 
-      if (queryParams.priceMin && queryParams.priceMax) {
-        if (property.price < Number(queryParams.priceMin) || property.price > Number(queryParams.priceMax)) {
+      if (queryParams.priceMin) {
+        if (property.price < Number(queryParams.priceMin)) {
+          isMatch = false;
+        }
+      }
+      
+      if (queryParams.priceMax) {
+        if (property.price > Number(queryParams.priceMax)) {
           isMatch = false;
         }
       }
 
-      if (queryParams.areaMin && queryParams.areaMax) {
-        if (property.size < Number(queryParams.areaMin) || property.size > Number(queryParams.areaMax)) {
+      if (queryParams.areaMin) {
+        if (property.size < Number(queryParams.areaMin)) {
+          isMatch = false;
+        }
+      }
+      
+      if (queryParams.areaMax) {
+        if (property.size > Number(queryParams.areaMax)) {
           isMatch = false;
         }
       }
